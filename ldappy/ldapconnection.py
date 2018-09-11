@@ -4,6 +4,7 @@ import ldap
 logger = logging.getLogger(__name__)
 LDAP_SUCCESS_CODE = 97
 
+DEFAULT_LDAP_TIMEOUT = 20
 
 class LdapConnection(object):
     def __init__(self, config):
@@ -31,11 +32,20 @@ class LdapConnection(object):
         :param password: the user password
         :return: LDAPObject instance by opening LDAP connection to LDAP host specified by LDAP URL.
         """
+
+        ldap_timeout = self._config.timeout
+        # Check explicitly for None ("0" means no timeout).
+        if ldap_timeout is None:
+            ldap_timeout = DEFAULT_LDAP_TIMEOUT
+
         try:
             self._conn = ldap.initialize(self._config.ldap_server)
             self._conn.protocol_version = ldap.VERSION3
             self._conn.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
             self._conn.set_option(ldap.OPT_REFERRALS, 0)
+            if ldap_timeout:
+                self._conn.set_option(ldap.OPT_NETWORK_TIMEOUT, ldap_timeout)
+                self._conn.set_option(ldap.OPT_TIMEOUT, ldap_timeout)
             distinguished_login_name = self.connection_login_string(username)
             password = password if password else self._config.password
             logger.debug('going to connect using user: {0}'.format(distinguished_login_name))

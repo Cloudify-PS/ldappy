@@ -12,10 +12,10 @@ def read(*parts):
 
 setup(
     name='ldappy',
-    version="0.1.5",
+    version="0.1.6",
     url='https://github.com/dusking/ldapy',
-    author='Omer Duskin',
-    author_email='dusking@gmail.com',
+    author='Cloudify',
+    author_email='hello@cloudify.co',
     license='LICENSE',
     platforms='All',
     description='Query LDAP server without LDAP knowledge',
